@@ -1,0 +1,69 @@
+<hazelcast xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.hazelcast.com/schema/config
+                               http://www.hazelcast.com/schema/config/hazelcast-config-3.7.xsd"
+	xmlns="http://www.hazelcast.com/schema/config">
+	<properties>
+		<property name="hazelcast.memcache.enabled">false</property>
+		<property name="hazelcast.rest.enabled">false</property>
+		<property name="hazelcast.wait.seconds.before.join">0</property>
+		<property name="hazelcast.logging.type">jdk</property>
+		<property name="hazelcast.health.monitoring.delay.seconds">2</property>
+		<property name="hazelcast.max.no.heartbeat.seconds">5</property>
+		<property name="hazelcast.max.no.master.confirmation.seconds">10</property>
+		<property name="hazelcast.master.confirmation.interval.seconds">10</property>
+		<property name="hazelcast.member.list.publish.interval.seconds">10</property>
+		<property name="hazelcast.connection.monitor.interval">10</property>
+		<property name="hazelcast.connection.monitor.max.faults">2</property>
+		<property name="hazelcast.partition.migration.timeout">10</property>
+		<property name="hazelcast.migration.min.delay.on.member.removed.seconds">3</property>
+		<property name="hazelcast.shutdownhook.enabled">false</property>
+	</properties>
+	<group>
+		<name>test</name>
+		<password>test</password>
+	</group>
+	<network>
+		<port auto-increment="true" port-count="10">5701</port>
+		<outbound-ports>
+			<ports>0</ports>
+		</outbound-ports>
+		<join>
+			<!-- For Multi Cast Based Clustering <multicast enabled="true"/> -->
+			<!-- Instance Discovery based on the TCP-IP if the multicast is disabled -->
+			<multicast enabled="false" />
+			<tcp-ip enabled="true">
+				<member>127.0.0.1</member>
+			</tcp-ip>
+		</join>
+		<interfaces enabled="true">
+            <interface>127.0.0.1</interface>
+        </interfaces>
+		<ssl enabled="false" />
+	</network>
+	<partition-group enabled="false" />
+	<executor-service name="default">
+		<pool-size>16</pool-size>
+		<!--Queue capacity. 0 means Integer.MAX_VALUE. -->
+		<queue-capacity>0</queue-capacity>
+	</executor-service>
+	
+	<multimap name="__vertx.subs">
+    	<backup-count>2</backup-count>
+  	</multimap>
+	
+	<map name="__vertx.haInfo">
+	    <backup-count>2</backup-count>
+	    <time-to-live-seconds>0</time-to-live-seconds>
+	    <max-idle-seconds>0</max-idle-seconds>
+	    <eviction-policy>NONE</eviction-policy>
+	    <max-size policy="PER_NODE">0</max-size>
+	    <eviction-percentage>25</eviction-percentage>
+	    <merge-policy>com.hazelcast.map.merge.LatestUpdateMapMergePolicy</merge-policy>
+  	</map>
+	
+	<!-- Used internally in Vert.x to implement async locks -->
+	<semaphore name="__vertx.*">
+		<initial-permits>1</initial-permits>
+	</semaphore>
+	
+</hazelcast>
